@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+.env.development
 
 # Distribution / packaging
 .Python
@@ -216,3 +217,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Extras
+logs/
+.env.*
+
+
