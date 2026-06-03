@@ -10,6 +10,7 @@ from typing import (
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import BaseMessage
 from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from openai import (
     APIError,
     APITimeoutError,
@@ -40,6 +41,13 @@ class LLMRegistry:
 
     # Class-level variable containing all available LLM models
     LLMS: List[Dict[str, Any]] = [
+        {
+            "name": "llama3.2:3b",
+            "llm": ChatOllama(
+                model="llama3.2:3b",
+                base_url=settings.OLLAMA_BASE_URL,
+            ),
+        },
         {
             "name": "gpt-5-mini",
             "llm": ChatOpenAI(
