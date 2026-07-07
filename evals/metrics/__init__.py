@@ -13,7 +13,9 @@ for file in os.listdir(PROMPTS_DIR):
     # Check if the file has a .md extension
     if file.endswith(".md"):
         # Read the content of the .md file and append it to the metrics list
-        metrics.append({
-            "name": file.replace(".md", ""),  # Use the file name (without extension) as the metric name
-            "prompt": open(os.path.join(PROMPTS_DIR, file), "r").read()  # Read the file content as the prompt
-        })
+        metrics.append(
+            {
+                "name": file.replace(".md", ""),  # Use the file name (without extension) as the metric name
+                "prompt": open(os.path.join(PROMPTS_DIR, file), "r").read(),  # Read the file content as the prompt
+            }
+        )

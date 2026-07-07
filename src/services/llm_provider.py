@@ -90,7 +90,8 @@ class LLMRegistry:
         {
             "name": "gpt-4o-mini",
             "llm": ChatOpenAI(
-                model="gpt-4o-mini",
+                model="openai/gpt-4o-mini",
+                base_url="https://models.github.ai/inference",
                 temperature=settings.DEFAULT_LLM_TEMPERATURE,
                 api_key=settings.OPENAI_API_KEY,
                 max_tokens=settings.MAX_TOKENS,

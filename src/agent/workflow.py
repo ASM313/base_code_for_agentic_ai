@@ -75,7 +75,7 @@ class LangGraphAgent:
     async def _long_term_memory(self) -> AsyncMemory:
         """Initialize the long term memory."""
         if self.memory is None:
-            self.memory = await AsyncMemory.from_config(
+            self.memory = AsyncMemory.from_config(
                 config_dict={
                     "vector_store": {
                         "provider": "pgvector",
@@ -93,7 +93,6 @@ class LangGraphAgent:
                         "config": {"model": settings.LONG_TERM_MEMORY_MODEL},
                     },
                     "embedder": {"provider": "openai", "config": {"model": settings.LONG_TERM_MEMORY_EMBEDDER_MODEL}},
-                    # "custom_fact_extraction_prompt": load_custom_fact_extraction_prompt(),
                 }
             )
         return self.memory
@@ -179,6 +178,7 @@ class LangGraphAgent:
 
         Args:
             state (GraphState): The current state of the conversation.
+            config (RunnableConfig): Configuration parameters for the run.
 
         Returns:
             Command: Command object with updated state and next node to execute.
@@ -339,6 +339,7 @@ class LangGraphAgent:
             return self.__process_messages(response["messages"])
         except Exception as e:
             logger.error(f"Error getting response: {str(e)}")
+            raise e
 
     async def get_stream_response(
         self, messages: list[Message], session_id: str, user_id: Optional[str] = None
