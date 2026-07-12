@@ -100,6 +100,30 @@ async def get_current_user(
         )
 
 
+async def get_admin_user(
+    user: User = Depends(get_current_user),
+) -> User:
+    """Verify the current user has admin privileges.
+
+    Args:
+        user: The authenticated user from get_current_user.
+
+    Returns:
+        User: The user, confirmed to be an admin.
+
+    Raises:
+        HTTPException: 403 Forbidden if the user is not an admin.
+    """
+    if not user.is_admin:
+        logger.warning("admin_access_denied", user_id=user.id, email=user.email)
+        raise HTTPException(
+            status_code=403,
+            detail="Admin access required. Contact your administrator.",
+        )
+    return user
+
+
+
 async def get_current_session(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> Session:

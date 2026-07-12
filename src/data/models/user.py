@@ -31,6 +31,7 @@ class User(BaseModel, table=True):
     id: int = Field(default=None, primary_key=True)
     email: str = Field(unique=True, index=True)
     hashed_password: str
+    is_admin: bool = Field(default=False)
     sessions: List["Session"] = Relationship(back_populates="user")
 
     def verify_password(self, password: str) -> bool:

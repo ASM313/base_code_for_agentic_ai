@@ -39,6 +39,9 @@ dependencies = [
     "mem0ai>=1.0.0",
     "uvloop>=0.22.1",
     "transformers>=4.40.0",
+    "langchain-postgres>=0.0.12",
+    "pypdf>=4.0.0",
+    "aiofiles>=23.2.1",
 ]
 
 [project.optional-dependencies]

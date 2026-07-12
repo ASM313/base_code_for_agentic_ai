@@ -18,6 +18,7 @@ ENV APP_ENV=${APP_ENV} \
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    poppler-utils \
     && pip install --upgrade pip \
     && pip install uv \
     && rm -rf /var/lib/apt/lists/*
@@ -41,7 +42,7 @@ RUN useradd -m appuser && chown -R appuser:appuser /app
 USER appuser
 
 # Create log directory
-RUN mkdir -p /app/logs
+RUN mkdir -p /app/logs && mkdir -p /app/uploads
 
 # Default port
 EXPOSE 8000
