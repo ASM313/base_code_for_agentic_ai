@@ -215,6 +215,11 @@ class Settings:
         self.EVALUATION_API_KEY = os.getenv("EVALUATION_API_KEY", self.OPENAI_API_KEY)
         self.EVALUATION_SLEEP_TIME = int(os.getenv("EVALUATION_SLEEP_TIME", "10"))
 
+        # Chatbot Service Configuration
+        self.INTERNAL_API_BASE_URL = os.getenv("INTERNAL_API_BASE_URL", "http://localhost:8000")
+        self.CHATBOT_USERNAME = os.getenv("CHATBOT_USERNAME")
+        self.CHATBOT_PASSWORD = os.getenv("CHATBOT_PASSWORD")
+
         # Apply environment-specific settings
         self.apply_environment_settings()
 

@@ -7,7 +7,8 @@ internal knowledge base retrieval (RAG).
 
 from langchain_core.tools.base import BaseTool
 
-from .web_search import duckduckgo_search_tool
+# from .web_search import duckduckgo_search_tool
 from .rag_search import rag_search_tool
 
-tools: list[BaseTool] = [rag_search_tool, duckduckgo_search_tool]
+# tools: list[BaseTool] = [rag_search_tool, duckduckgo_search_tool]
+tools: list[BaseTool] = [rag_search_tool]
