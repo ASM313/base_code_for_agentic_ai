@@ -83,7 +83,7 @@ async def public_chat(payload: PublicChatRequest) -> PublicChatResponse:
     try:
         service_token = await get_chatbot_service_token()
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=300.0) as client:
             resp = await client.post(
                 internal_url,
                 json={"messages": [m.model_dump() for m in payload.messages]},
