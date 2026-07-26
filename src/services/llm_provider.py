@@ -46,6 +46,7 @@ class LLMRegistry:
             "llm": ChatOllama(
                 model="llama3.2:3b",
                 base_url=settings.OLLAMA_BASE_URL,
+                streaming=False,
             ),
         },
         {
