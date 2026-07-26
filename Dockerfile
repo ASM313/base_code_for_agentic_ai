@@ -18,6 +18,7 @@ ENV APP_ENV=${APP_ENV} \
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
+    curl \
     poppler-utils \
     && pip install --upgrade pip \
     && pip install uv \
