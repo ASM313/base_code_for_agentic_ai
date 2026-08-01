@@ -56,9 +56,9 @@ jobs:
 
             EOF
 
-            docker compose pull
+            docker compose -f docker-compose-prod.yaml pull
 
-            docker compose up -d --force-recreate
+            docker compose -f docker-compose-prod.yaml up -d --force-recreate
 
             echo "Waiting..."
 
@@ -84,8 +84,8 @@ jobs:
 
             sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=${PREVIOUS_TAG}/" .env
 
-            docker compose pull
+            docker compose -f docker-compose-prod.yaml pull
 
-            docker compose up -d --force-recreate
+            docker compose -f docker-compose-prod.yaml up -d --force-recreate
 
             exit 1
