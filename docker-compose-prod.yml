@@ -1,0 +1,144 @@
+services:
+
+  db:
+    image: pgvector/pgvector:pg16-bookworm
+    container_name: postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    networks:
+      - backend
+
+
+  ollama:
+    image: ollama/ollama:0.11.7
+
+    container_name: ollama
+
+    restart: unless-stopped
+
+    volumes:
+      - ollama-data:/root/.ollama
+
+    healthcheck:
+      test: ["CMD","ollama","list"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+
+    networks:
+      - backend
+
+
+  ollama-init:
+    image: curlimages/curl
+
+    restart: "no"
+
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+    entrypoint: >
+      sh -c "
+      curl -s http://ollama:11434/api/tags | grep -q 'llama3.2:3b' ||
+      curl -X POST http://ollama:11434/api/pull -H 'Content-Type: application/json'
+      -d '{\"name\":\"llama3.2:3b\"}' &&
+
+      curl -s http://ollama:11434/api/tags | grep -q 'qwen3-embedding:0.6b' ||
+      curl -X POST http://ollama:11434/api/pull -H 'Content-Type: application/json'
+      -d '{\"name\":\"qwen3-embedding:0.6b\"}'
+      "
+
+    networks:
+      - backend
+
+
+  app:
+
+    image: ${DOCKERHUB_USERNAME}/base_code_for_agentic_ai:${IMAGE_TAG}
+
+    container_name: fastapi-app
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    depends_on:
+
+      db:
+        condition: service_healthy
+
+      ollama:
+        condition: service_healthy
+
+      ollama-init:
+        condition: service_completed_successfully
+
+    expose:
+      - "8000"
+
+    volumes:
+      - logs:/app/logs
+      - uploads:/app/uploads
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    networks:
+      - backend
+
+
+  nginx:
+
+    image: nginx:1.29-alpine
+
+    restart: unless-stopped
+
+    depends_on:
+      app:
+        condition: service_healthy
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+    networks:
+      - backend
+
+
+networks:
+  backend:
+
+
+volumes:
+  postgres-data:
+  ollama-data:
+  logs:
+  uploads:
