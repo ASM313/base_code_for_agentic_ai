@@ -1,56 +1,77 @@
-FROM python:3.13.2-slim
+FROM python:3.11.11-slim-bookworm
 
-# Set working directory
+
 WORKDIR /app
 
-# Set non-sensitive environment variables
+
 ARG APP_ENV=production
+
 
 ENV APP_ENV=${APP_ENV} \
     PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100
+    PIP_DISABLE_PIP_VERSION_CHECK=on
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    curl \
-    poppler-utils \
-    && pip install --upgrade pip \
-    && pip install uv \
+
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+
+# System dependencies
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libpq-dev \
+        curl \
+        poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy pyproject.toml first to leverage Docker cache
-COPY pyproject.toml .
-RUN uv venv && . .venv/bin/activate && uv pip install -e .
 
-# Copy the application
-COPY . /app/
-COPY scripts/docker-entrypoint.sh /app/scripts/docker-entrypoint.sh
 
-# Remove Windows carriage returns (\r) in case of CRLF line endings
-RUN sed -i 's/\r$//' /app/scripts/docker-entrypoint.sh
+# Install dependencies first
+COPY pyproject.toml uv.lock ./
 
-# Make entrypoint script executable - do this before changing user
-RUN chmod +x /app/scripts/docker-entrypoint.sh
 
-# Create a non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
+RUN uv sync --frozen --no-dev
+
+
+
+# Copy application
+COPY . .
+
+
+# Fix entrypoint
+RUN sed -i 's/\r$//' /app/scripts/docker-entrypoint.sh \
+    && chmod +x /app/scripts/docker-entrypoint.sh
+
+
+
+# Non-root user
+RUN useradd \
+    --create-home \
+    appuser \
+    && chown -R appuser:appuser /app
+
+
 USER appuser
 
-# Create log directory
-RUN mkdir -p /app/logs && mkdir -p /app/uploads
 
-# Default port
+
+RUN mkdir -p \
+    /app/logs \
+    /app/uploads
+
+
+
 EXPOSE 8000
 
-# Log the environment we're using
-RUN echo "Using ${APP_ENV} environment"
 
-# Command to run the application
+
 ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
-CMD ["/app/.venv/bin/uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"] 
+
+
+CMD ["/app/.venv/bin/uvicorn","src.main:app","--host","0.0.0.0","--port","8000"]
