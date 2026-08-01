@@ -3,7 +3,7 @@ name = "custom-ai-agent"
 version = "0.1.0"
 description = "Production ready AI Agent with LangGraph"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11,<3.12"
 dependencies = [
     "fastapi>=0.121.0",
     "langchain>=1.0.5",
