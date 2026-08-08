@@ -16,6 +16,12 @@ ENV APP_ENV=${APP_ENV} \
 # ---------------------------------------------------------
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
+
+# ---------------------------------------------------------
+# Install Python dependencies
+# ---------------------------------------------------------
+COPY pyproject.toml uv.lock ./
+
 RUN uv sync --frozen --no-dev
 
 # ---------------------------------------------------------
@@ -37,11 +43,6 @@ RUN apt-get update \
         curl \
         poppler-utils \
     && rm -rf /var/lib/apt/lists/*
-
-# ---------------------------------------------------------
-# Install Python dependencies
-# ---------------------------------------------------------
-COPY pyproject.toml uv.lock ./
 
 # ---------------------------------------------------------
 # Copy application
