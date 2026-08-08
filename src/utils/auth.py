@@ -8,10 +8,8 @@ from datetime import (
 )
 from typing import Optional
 
-from jose import (
-    JWTError,
-    jwt,
-)
+import jwt
+from jwt.exceptions import PyJWTError as JWTError
 
 from src.config.settings import settings
 from src.system.logs import logger

@@ -16,6 +16,8 @@ ENV APP_ENV=${APP_ENV} \
 # ---------------------------------------------------------
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
+RUN uv sync --frozen --no-dev
+
 # ---------------------------------------------------------
 # Upgrade Python packaging tools
 # ---------------------------------------------------------
@@ -40,8 +42,6 @@ RUN apt-get update \
 # Install Python dependencies
 # ---------------------------------------------------------
 COPY pyproject.toml uv.lock ./
-
-RUN uv sync --frozen --no-dev
 
 # ---------------------------------------------------------
 # Copy application

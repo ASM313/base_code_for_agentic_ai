@@ -66,6 +66,7 @@ dependencies = [
     # ML
     # ----------------------------
     "transformers>=4.57.0",
+    "torch>=2.2.0",
 
     # ----------------------------
     # Logging
@@ -106,6 +107,7 @@ dependencies = [
     # Optional Backend
     # ----------------------------
     "supabase>=2.15.0",
+    "msgpack >= 1.2.1",
 ]
 
 [project.optional-dependencies]
